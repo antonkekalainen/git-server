@@ -1,4 +1,7 @@
 # Clojure Git server
+
+An HTTPS server for Git, implemented from scratch using Clojure. 
+
 ## Prerequisites
 
 You will need [Leiningen][] 2.0.0 or above installed.
