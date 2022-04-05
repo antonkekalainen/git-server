@@ -133,7 +133,7 @@
    (write out bytes 0 (alength bytes))))
 
 (defn finish-sideband-stream [out]
-  (write-string "0000" (.out out)))
+  (write-string (.out out) "0000"))
 
 (defn read-pkt-header [in]
   (let [bytes (byte-array 4)]
@@ -380,7 +380,7 @@
              direct []
              delta []]
         (if (empty? objs)
-          (do (with-open [writer (java.io.FileOutputStream. (str "packs/" pack-id))]
+          (do (with-open [writer (java.io.FileOutputStream. (str "pack/" pack-id))]
                 (.write writer (.toByteArray out)))
               (write-pack-index db pack-id direct delta))
           (let [obj (first objs)
@@ -539,7 +539,7 @@
 (defn get-single-object [db hash]
   (let [b (first (query db "SELECT pack, compressed_size, size, location, type FROM objects WHERE hash = ?;" [hash]))]
     (if b
-      (let [file (java.io.FileInputStream. (str "packs/" (nth b 0)))
+      (let [file (java.io.FileInputStream. (str "pack/" (nth b 0)))
             buf (byte-array (nth b 1))]
         (.skip file (nth b 3))
         (.read file buf 0 (nth b 1))
@@ -551,7 +551,7 @@
         (if d
           (let [b (get-single-object db (nth d 4))
                 buf (byte-array (nth d 1))
-                file (java.io.FileInputStream. (str "packs/" (nth d 0)))]
+                file (java.io.FileInputStream. (str "pack/" (nth d 0)))]
             (.skip file (nth d 3))
             (.read file buf 0 (nth d 1))
             (.close file)
